@@ -77,6 +77,14 @@
             ;
         };
 
+        postgresImage = pkgs.callPackage ./postgres.docker.nix {
+          inherit pkgs;
+          postgresImageName = "postgis-h3";
+          postgresImageTag = "latest";
+          postgres = pkgs.postgresql_18;
+          postgresPackages = pkgs.postgresql18Packages;
+        };
+
         formatting =
           let
             treefmtEval = treefmt-nix.lib.evalModule pkgs (
@@ -110,6 +118,7 @@
 
         packages = {
           inherit jar;
+          postgresImage = postgresImage.postgresImage;
           docker = dockerImage.reittiImage;
           default = self.packages.${system}.jar;
         };
